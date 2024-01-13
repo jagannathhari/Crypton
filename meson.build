@@ -1,6 +1,6 @@
 project('File Encrypter', 'c', version: '1.0')
 
-c_flags = ['-std=c11', '-Wall', '-Wextra', '-pedantic', '-O0']
+c_flags = ['-std=c11', '-Wall', '-Wextra', '-pedantic', '-O0','-ggdb']
 
 
 
