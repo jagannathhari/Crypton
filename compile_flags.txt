@@ -1,0 +1,6 @@
+-xc
+-std=c11
+-I./src/include/
+-I./subprojects/SDL2-2.28.5/include/
+-I./libsodium/include/
+

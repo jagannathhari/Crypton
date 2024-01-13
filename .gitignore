@@ -1,0 +1,6 @@
+build/
+build-mingw/
+meson.build_bkp
+packagecache/
+SDL2-2.28.5/
+.cache/
