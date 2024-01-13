@@ -39,17 +39,19 @@ char *add_extension(const char *file_name , const char *extension){
 
 char *get_dirname(const char *path){
     char *_path = malloc(sizeof(char)*strlen(path)+1);
+    char *temp = _path;
     strcpy(_path,path);
     char *dir = str_duplicate(dirname(_path));
-    free(_path);
+    free(temp);
     return dir;
 }
 
 char *get_basename(const char *path){
-    char *_path = malloc(sizeof(char)*strlen(path));
+    char *_path = malloc(sizeof(char)*strlen(path)+1);
+    char *temp = _path;
     strcpy(_path,path);
     char *base = str_duplicate(basename(_path));
-    free(_path);
+    free(temp);
     return base;
 }
 

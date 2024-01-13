@@ -46,22 +46,24 @@ void process_file(Thread_args *data, Node *file_node, const char *password) {
     if (data->mode == ENCRYPT) {
         new_file_name = add_extension(file_name, ".enc");
         encrypt(new_file_name, file_node->file_name, password, data->progress);
+        free(new_file_name);
+        free(file_name);
     } else {
+        char *temp = file_name;
         char *dot = strrchr(file_name, '.');
         if (dot != NULL) {
             *dot = '\0';
         }
         decrypt(file_name, file_node->file_name, password, data->progress);
+        free(temp);
     }
 
-    free(new_file_name);
-    free(file_name);
 }
 
 void *process_files(void *arg) {
     Thread_args *data = (Thread_args *)arg;
     Node *tmp = NULL;
-    char *current_file;
+    char *current_file=NULL;
     if (data->file_list != NULL) {
         tmp = data->file_list->head;
         char *const passsword = str_duplicate(data->password);
