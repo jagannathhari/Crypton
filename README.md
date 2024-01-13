@@ -1,6 +1,6 @@
-#Cryption
+# Cryption
 
-#How to build it 
+# How to build it 
 
 ```
 git clone https://github.com/jagannathhari/Cryption.git
