@@ -1,5 +1,8 @@
 # Cryption
 
+# Screenshot
+![alt text](./screenshot/cryption.png)
+
 # How to build it 
 
 ```
