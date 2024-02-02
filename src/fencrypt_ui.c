@@ -57,13 +57,12 @@ void process_file(Thread_args *data, Node *file_node, const char *password) {
         decrypt(file_name, file_node->file_name, password, data->progress);
         free(temp);
     }
-
 }
 
 void *process_files(void *arg) {
     Thread_args *data = (Thread_args *)arg;
     Node *tmp = NULL;
-    char *current_file=NULL;
+    char *current_file = NULL;
     if (data->file_list != NULL) {
         tmp = data->file_list->head;
         char *const passsword = str_duplicate(data->password);
@@ -72,7 +71,7 @@ void *process_files(void *arg) {
             *data->progress = 0;
             current_file = get_basename(tmp->file_name);
             data->current_file = current_file;
-            process_file(data,tmp,passsword);
+            process_file(data, tmp, passsword);
             free(current_file);
             tmp = tmp->next;
         }
@@ -121,13 +120,25 @@ void add_item(struct nk_context *ctx, List *list) {
     }
 }
 
+void crypt_button(struct nk_context *ctx, const char *label, List *list,
+                  Thread_args *args, const char *password, Mode mode) {
+    if (nk_button_label(ctx, label)) {
+        args->password = password;
+        args->file_list = list;
+        args->mode = mode;
+        start_encryption_thread(list, args);
+    }
+}
 void fencrypt_ui(struct nk_context *ctx, const int w, const int h, List *list) {
     static char password[33];
     static float progress = 0;
     static int show_password = 0;
     static char msg[] = "S";
-    static Thread_args args = {
-        .file_list = NULL, .password = NULL, .is_finished = true,.progress = &progress,.current_file=NULL};
+    static Thread_args args = {.file_list = NULL,
+                               .password = NULL,
+                               .is_finished = true,
+                               .progress = &progress,
+                               .current_file = NULL};
     if (nk_begin(ctx, "Fencrypt", nk_rect(0, 0, w, h),
                  NK_WINDOW_NO_SCROLLBAR)) {
         nk_layout_row_static(ctx, (float)300, w - 40, 1);
@@ -151,37 +162,29 @@ void fencrypt_ui(struct nk_context *ctx, const int w, const int h, List *list) {
         nk_layout_row_push(ctx, 0.20f);
         nk_label(ctx, "Password:", NK_TEXT_ALIGN_MIDDLE | NK_TEXT_ALIGN_LEFT);
         nk_layout_row_push(ctx, 0.70f);
-        if(show_password){
-            nk_edit_string_zero_terminated(ctx,NK_EDIT_FIELD,password,33,NULL);
+        if (show_password) {
+            nk_edit_string_zero_terminated(ctx, NK_EDIT_FIELD, password, 33,
+                                           NULL);
             msg[0] = 'H';
-        }else{
+        } else {
             password_input(ctx, NK_EDIT_FIELD, password, 33, NULL);
             msg[0] = 'S';
         }
-        nk_layout_row_push(ctx,0.10f);
+        nk_layout_row_push(ctx, 0.10f);
 
-        if(nk_button_label(ctx,msg)){
+        if (nk_button_label(ctx, msg)) {
             show_password = !show_password;
         }
 
         nk_layout_row_end(ctx);
-        if(args.is_finished == false){
-            nk_layout_row_dynamic(ctx,0,1);
-            nk_labelf(ctx,NK_TEXT_ALIGN_LEFT,"%s  %.2f" ,args.current_file, progress);
+        if (args.is_finished == false) {
+            nk_layout_row_dynamic(ctx, 0, 1);
+            nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "%s  %.2f", args.current_file,
+                      progress);
         }
         nk_layout_row_dynamic(ctx, 0, 2);
-        if (nk_button_label(ctx, "Encrypt")) {
-            args.password = password;
-            args.file_list = list;
-            args.mode = ENCRYPT;
-            start_encryption_thread(list, &args);
-        }
-        if (nk_button_label(ctx, "Decrypt")) {
-            args.password = password;
-            args.file_list = list;
-            args.mode = DECRYPT;
-            start_encryption_thread(list, &args);
-        }
+        crypt_button(ctx, "Encrypt", list, &args, password, ENCRYPT);
+        crypt_button(ctx, "Decrypt", list, &args, password, DECRYPT);
     }
     nk_end(ctx);
 }
