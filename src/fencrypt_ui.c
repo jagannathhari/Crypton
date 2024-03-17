@@ -131,8 +131,8 @@ void crypt_button(struct nk_context *ctx, const char *label, List *list,
 }
 void fencrypt_ui(struct nk_context *ctx, const int w, const int h, List *list) {
     static char password[33];
-    static float progress = 0;
-    static int show_password = 0;
+    static float progress;
+    static int show_password;
     static char msg[] = "S";
     static Thread_args args = {.file_list = NULL,
                                .password = NULL,
