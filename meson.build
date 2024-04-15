@@ -1,17 +1,14 @@
 project('File Encrypter', 'c', version: '1.0')
 
-c_flags = ['-std=c11', '-Wall', '-Wextra', '-pedantic', '-O0','-ggdb']
-
-
+c_flags = ['-std=c11', '-Wall', '-Wextra', '-pedantic']
 
 add_global_arguments('-Wl,-rpath=./', language: 'c')
-#if get_option('buildtype') == 'release'
-#  add_global_arguments('-DRELEASE', language: 'c')
-#endif
-
-
-
-add_global_arguments('-DRELEASE', language: 'c')
+if get_option('buildtype') == 'release'
+  add_global_arguments('-DRELEASE', language: 'c')
+  c_flags += ['-O3','-s']
+else
+  c_flags += ['-O0','-ggdb']
+endif
 
 sdl_options = [
   'default_library=static',
@@ -64,12 +61,6 @@ else
 endif
 
 
-
-
-
-
-
-
 # we don't need these
 sdl_options += [
   'test=false',
@@ -99,15 +90,15 @@ endif
 
 compiler = meson.get_compiler('c')
 if host_machine.system() == 'linux'
-  libcrypto_dep =  compiler.find_library('libsodium', dirs: '/home/jagannath/programming/file_encrypter/libsodium/linux_x86_64')
+  libcrypto_dep = compiler.find_library('sodium', dirs: [meson.current_source_dir() / 'libsodium/linux_x86_64'])
 endif
 
 if host_machine.system() == 'windows'
-  libcrypto_dep =  compiler.find_library('sodium', dirs: '/home/jagannath/programming/file_encrypter/libsodium/window_x86_64')
+  libcrypto_dep = compiler.find_library('sodium', dirs: [meson.current_source_dir() / 'libsodium/window_x86_64'])
 endif
 
 executable(
-  'fencrypt',
+  'cryption',
   sources: ['src/main.c','src/list.c','src/utils/file_util.c' , 'src/encrypter/encrypter.c'],
   include_directories: [include_dir,libsodium_include_dir],
   c_args: c_flags,
