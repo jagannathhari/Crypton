@@ -8,12 +8,13 @@
 #include<libgen.h>
 
 char *str_duplicate(const char * str){
-    if(str == NULL){
+    if(!str){
         return NULL;
     }
+
     size_t len = strlen(str) + 1;
     char *new_str = malloc(len);
-    if (new_str != NULL) {
+    if (new_str) {
         strcpy(new_str, str);
     }
 
@@ -31,6 +32,9 @@ long get_file_size(FILE *file){
 }
 char *add_extension(const char *file_name , const char *extension){
     char *new_file_name = malloc(strlen(file_name)+strlen(extension)+1);
+
+    if(!new_file_name) return NULL;
+
     strcpy(new_file_name,file_name);
     strcat(new_file_name,extension);
     return new_file_name;
@@ -38,7 +42,12 @@ char *add_extension(const char *file_name , const char *extension){
 
 
 char *get_dirname(const char *path){
-    char *_path = malloc(sizeof(char)*strlen(path)+1);
+    char *_path = malloc(strlen(path)+1);
+
+    if(!path){
+        return NULL;
+    } 
+
     char *temp = _path;
     strcpy(_path,path);
     char *dir = str_duplicate(dirname(_path));
@@ -48,6 +57,11 @@ char *get_dirname(const char *path){
 
 char *get_basename(const char *path){
     char *_path = malloc(sizeof(char)*strlen(path)+1);
+
+    if(!path){
+        return NULL;
+    }
+
     char *temp = _path;
     strcpy(_path,path);
     char *base = str_duplicate(basename(_path));
