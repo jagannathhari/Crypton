@@ -1,20 +1,21 @@
 
 #ifndef RELEASE
-#define NK_INCLUDE_FIXED_TYPES
-#include "SDL_render.h"
-#define NK_INCLUDE_STANDARD_IO
-#define NK_INCLUDE_STANDARD_VARARGS
-#define NK_INCLUDE_DEFAULT_ALLOCATOR
-#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-#define NK_INCLUDE_FONT_BAKING
-#define NK_INCLUDE_DEFAULT_FONT
-#define NK_IMPLEMENTATION
-#define NK_ZERO_COMMAND_MEMORY
-#include "list.h"
-#include <nuklear.h>
-#include <stddef.h>
-#include <stdio.h>
+    #define NK_INCLUDE_FIXED_TYPES
+    #include "SDL_render.h"
+    #define NK_INCLUDE_STANDARD_IO
+    #define NK_INCLUDE_STANDARD_VARARGS
+    #define NK_INCLUDE_DEFAULT_ALLOCATOR
+    #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+    #define NK_INCLUDE_FONT_BAKING
+    #define NK_INCLUDE_DEFAULT_FONT
+    #define NK_IMPLEMENTATION
+    #define NK_ZERO_COMMAND_MEMORY
+    #include "list.h"
+    #include <nuklear.h>
+    #include <stddef.h>
+    #include <stdio.h>
 #endif
+
 #include "encrypter.h"
 #include "file_util.h"
 #include "password_input.h"
@@ -61,13 +62,14 @@ void process_file(Thread_args *data, Node *file_node, const char *password) {
 
 void *process_files(void *arg) {
     Thread_args *data = (Thread_args *)arg;
+    if(!data->file_list) goto cleanup;
     Node *tmp = NULL;
     char *current_file = NULL;
-    if (data->file_list != NULL) {
+
         tmp = data->file_list->head;
         char *const passsword = str_duplicate(data->password);
         data->is_finished = false;
-        while (tmp != NULL) {
+        while (tmp) {
             *data->progress = 0;
             current_file = get_basename(tmp->file_name);
             data->current_file = current_file;
@@ -78,9 +80,9 @@ void *process_files(void *arg) {
         data->current_file = NULL;
         data->is_finished = true;
         free(passsword);
-    }
 
-    pthread_exit(NULL);
+    cleanup:
+        pthread_exit(NULL);
 }
 
 void start_encryption_thread(List *file_list, Thread_args *args) {
@@ -93,7 +95,7 @@ void start_encryption_thread(List *file_list, Thread_args *args) {
 void add_item(struct nk_context *ctx, List *list) {
     Node *current = list->head;
     Node *previous = NULL;
-    while (current != NULL) {
+    while (current) {
         nk_layout_row_begin(ctx, NK_DYNAMIC, 0, 2);
         nk_layout_row_push(ctx, 0.90f);
 
@@ -139,6 +141,7 @@ void fencrypt_ui(struct nk_context *ctx, const int w, const int h, List *list) {
                                .is_finished = true,
                                .progress = &progress,
                                .current_file = NULL};
+
     if (nk_begin(ctx, "Fencrypt", nk_rect(0, 0, w, h),
                  NK_WINDOW_NO_SCROLLBAR)) {
         nk_layout_row_static(ctx, (float)300, w - 40, 1);
